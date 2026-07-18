@@ -6,16 +6,15 @@
     --primary: #315efb;
     --primary-hover: #244bd2;
     --text-primary: #172033;
-    --text-secondary: #687186;
-    --border: rgba(210, 218, 232, 0.95);
+    --text-secondary: #5f6879;
+    --border: rgba(255, 255, 255, 0.34);
     --error: #c62828;
     --success: #16794c;
-    --card-background: rgba(255, 255, 255, 0.90);
 }
 
 html {
     min-height: 100%;
-    background: #111827;
+    background: #0b1020;
 }
 
 body {
@@ -24,7 +23,7 @@ body {
     overflow-x: hidden;
     font-family: Arial, Helvetica, sans-serif;
     color: var(--text-primary);
-    background: #111827;
+    background: #0b1020;
 }
 
 button,
@@ -42,12 +41,7 @@ select {
     inset: 0;
     z-index: 0;
     overflow: hidden;
-    background:
-        linear-gradient(
-            135deg,
-            #172033,
-            #0b1020
-        );
+    background: #0b1020;
     pointer-events: none;
 }
 
@@ -64,30 +58,24 @@ select {
 
     transform:
         translate(-50%, -50%)
-        scale(1.10);
+        scale(1.08);
 
     filter:
-        blur(3px)
-        saturate(0.90);
+        blur(2px)
+        brightness(0.88)
+        saturate(1.12);
 
-    opacity: 0.92;
+    opacity: 1;
 }
 
-/*
-    Videonun ayrıntılarını iyice yumuşatır.
-    Böylece video tamamen net görünmez.
-*/
 .video-blur {
     position: absolute;
     inset: -20px;
 
-    backdrop-filter: blur(7px);
-    -webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
 }
 
-/*
-    Formun okunabilmesi için videonun üstündeki koyu katman.
-*/
 .video-overlay {
     position: absolute;
     inset: 0;
@@ -95,8 +83,8 @@ select {
     background:
         linear-gradient(
             135deg,
-            rgba(7, 14, 31, 0.76),
-            rgba(18, 31, 58, 0.48)
+            rgba(5, 12, 28, 0.38),
+            rgba(16, 29, 54, 0.22)
         );
 }
 
@@ -127,17 +115,26 @@ select {
 
     padding: 38px;
 
-    background: var(--card-background);
+    /*
+       Kartı yarı şeffaf yapıyoruz.
+       Böylece arka plandaki video kartın içinden görünür.
+    */
+    background: rgba(255, 255, 255, 0.38);
 
-    border: 1px solid rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.48);
     border-radius: 22px;
 
     box-shadow:
-        0 30px 90px rgba(0, 0, 0, 0.38),
-        inset 0 1px 0 rgba(255, 255, 255, 0.70);
+        0 30px 90px rgba(0, 0, 0, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.62);
 
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter:
+        blur(14px)
+        saturate(1.1);
+
+    -webkit-backdrop-filter:
+        blur(14px)
+        saturate(1.1);
 
     animation: cardOpen 500ms ease-out both;
 }
@@ -168,31 +165,39 @@ select {
     margin-bottom: 12px;
     padding: 7px 12px;
 
-    color: var(--primary);
-    background: rgba(49, 94, 251, 0.11);
+    color: #2146cc;
+    background: rgba(255, 255, 255, 0.52);
 
-    border: 1px solid rgba(49, 94, 251, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.6);
     border-radius: 20px;
 
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.55px;
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .card-header h1 {
     margin: 0 0 10px;
 
+    color: #111827;
+
     font-size: 34px;
     line-height: 1.15;
     letter-spacing: -0.7px;
+
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.38);
 }
 
 .card-header p {
     margin: 0;
 
-    color: var(--text-secondary);
+    color: #374151;
 
     line-height: 1.6;
+    font-weight: 500;
 }
 
 /* =========================================================
@@ -214,6 +219,8 @@ select {
 
     margin-bottom: 8px;
 
+    color: #1f2937;
+
     font-size: 14px;
     font-weight: 700;
 }
@@ -226,12 +233,20 @@ select {
     padding: 0 15px;
 
     color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.88);
 
-    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.76);
+
+    border: 1px solid rgba(255, 255, 255, 0.62);
     border-radius: 11px;
 
     outline: none;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.55),
+        0 5px 16px rgba(0, 0, 0, 0.07);
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 
     transition:
         border-color 160ms ease,
@@ -241,23 +256,23 @@ select {
 }
 
 input::placeholder {
-    color: #9aa3b5;
+    color: #7f8898;
 }
 
 input:hover:not(:disabled),
 select:hover:not(:disabled) {
-    border-color: rgba(49, 94, 251, 0.50);
-    background: #ffffff;
+    border-color: rgba(49, 94, 251, 0.55);
+    background: rgba(255, 255, 255, 0.88);
 }
 
 input:focus,
 select:focus {
     border-color: var(--primary);
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.94);
 
     box-shadow:
-        0 0 0 4px rgba(49, 94, 251, 0.12),
-        0 8px 20px rgba(49, 94, 251, 0.08);
+        0 0 0 4px rgba(49, 94, 251, 0.14),
+        0 10px 24px rgba(49, 94, 251, 0.1);
 }
 
 input.input-error,
@@ -265,14 +280,13 @@ select.input-error {
     border-color: var(--error);
 
     box-shadow:
-        0 0 0 3px rgba(198, 40, 40, 0.09);
+        0 0 0 3px rgba(198, 40, 40, 0.1);
 }
 
 input:disabled,
 select:disabled {
-    color: #999999;
-    background: rgba(237, 240, 245, 0.88);
-
+    color: #8b8f99;
+    background: rgba(235, 238, 244, 0.72);
     cursor: not-allowed;
 }
 
@@ -282,10 +296,11 @@ select:disabled {
     min-height: 17px;
     margin-top: 5px;
 
-    color: var(--error);
+    color: #b91c1c;
 
     font-size: 12px;
     line-height: 1.35;
+    font-weight: 600;
 }
 
 /* =========================================================
@@ -302,14 +317,14 @@ select:disabled {
         linear-gradient(
             135deg,
             var(--primary),
-            #244bd2
+            var(--primary-hover)
         );
 
     border: none;
     border-radius: 11px;
 
     box-shadow:
-        0 12px 26px rgba(49, 94, 251, 0.27);
+        0 12px 28px rgba(49, 94, 251, 0.34);
 
     font-weight: 700;
     cursor: pointer;
@@ -324,9 +339,9 @@ select:disabled {
     transform: translateY(-1px);
 
     box-shadow:
-        0 16px 32px rgba(49, 94, 251, 0.34);
+        0 17px 35px rgba(49, 94, 251, 0.42);
 
-    filter: brightness(1.04);
+    filter: brightness(1.05);
 }
 
 .submit-button:active:not(:disabled) {
@@ -334,7 +349,7 @@ select:disabled {
 }
 
 .submit-button:focus-visible {
-    outline: 3px solid rgba(49, 94, 251, 0.30);
+    outline: 3px solid rgba(49, 94, 251, 0.34);
     outline-offset: 3px;
 }
 
@@ -356,20 +371,23 @@ select:disabled {
 
     line-height: 1.5;
     white-space: pre-line;
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .form-message.success {
     color: var(--success);
-    background: rgba(236, 249, 242, 0.96);
+    background: rgba(236, 249, 242, 0.88);
 
-    border: 1px solid rgba(22, 121, 76, 0.15);
+    border: 1px solid rgba(22, 121, 76, 0.18);
 }
 
 .form-message.error {
     color: var(--error);
-    background: rgba(255, 241, 241, 0.96);
+    background: rgba(255, 241, 241, 0.88);
 
-    border: 1px solid rgba(198, 40, 40, 0.13);
+    border: 1px solid rgba(198, 40, 40, 0.16);
 }
 
 .hidden {
@@ -381,7 +399,6 @@ select:disabled {
    ========================================================= */
 
 @media (max-width: 650px) {
-
     .page {
         align-items: flex-start;
         padding: 18px 12px;
@@ -389,6 +406,9 @@ select:disabled {
 
     .application-card {
         padding: 27px 18px;
+
+        background: rgba(255, 255, 255, 0.46);
+
         border-radius: 18px;
     }
 
@@ -415,19 +435,9 @@ select:disabled {
             translate(-50%, -50%)
             scale(1.18);
     }
-
 }
 
-/*
-    Kullanıcı cihazında hareket azaltma tercih etmişse
-    videoyu göstermeyerek gereksiz hareketi azaltır.
-*/
 @media (prefers-reduced-motion: reduce) {
-
-    .background-video {
-        display: none;
-    }
-
     .application-card {
         animation: none;
     }
@@ -437,5 +447,4 @@ select:disabled {
     select {
         transition: none;
     }
-
 }
