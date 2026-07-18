@@ -21,8 +21,10 @@ body {
     min-height: 100vh;
     margin: 0;
     overflow-x: hidden;
+
     font-family: Arial, Helvetica, sans-serif;
     color: var(--text-primary);
+
     background: #0b1020;
 }
 
@@ -40,7 +42,9 @@ select {
     position: fixed;
     inset: 0;
     z-index: 0;
+
     overflow: hidden;
+
     background: #0b1020;
     pointer-events: none;
 }
@@ -115,11 +119,7 @@ select {
 
     padding: 38px;
 
-    /*
-       Kartı yarı şeffaf yapıyoruz.
-       Böylece arka plandaki video kartın içinden görünür.
-    */
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.38);
 
     border: 1px solid rgba(255, 255, 255, 0.48);
     border-radius: 22px;
@@ -233,7 +233,6 @@ select {
     padding: 0 15px;
 
     color: var(--text-primary);
-
     background: rgba(255, 255, 255, 0.76);
 
     border: 1px solid rgba(255, 255, 255, 0.62);
@@ -272,7 +271,7 @@ select:focus {
 
     box-shadow:
         0 0 0 4px rgba(49, 94, 251, 0.14),
-        0 10px 24px rgba(49, 94, 251, 0.1);
+        0 10px 24px rgba(49, 94, 251, 0.10);
 }
 
 input.input-error,
@@ -280,20 +279,24 @@ select.input-error {
     border-color: var(--error);
 
     box-shadow:
-        0 0 0 3px rgba(198, 40, 40, 0.1);
+        0 0 0 3px rgba(198, 40, 40, 0.10);
 }
 
 input:disabled,
 select:disabled {
     color: #8b8f99;
     background: rgba(235, 238, 244, 0.72);
+
     cursor: not-allowed;
 }
 
+/*
+   Hata mesajı boşken tamamen gizlenir.
+   Bu nedenle formda boş alan kaplamaz.
+*/
 .error-message {
-    display: block;
+    display: none;
 
-    min-height: 17px;
     margin-top: 5px;
 
     color: #b91c1c;
@@ -301,6 +304,13 @@ select:disabled {
     font-size: 12px;
     line-height: 1.35;
     font-weight: 600;
+}
+
+/*
+   JavaScript hata olduğunda "show" sınıfını ekler.
+*/
+.error-message.show {
+    display: block;
 }
 
 /* =========================================================
@@ -355,12 +365,13 @@ select:disabled {
 
 .submit-button:disabled {
     opacity: 0.65;
+
     cursor: not-allowed;
     box-shadow: none;
 }
 
 /* =========================================================
-   SONUÇ MESAJI
+   FORM SONUÇ MESAJI
    ========================================================= */
 
 .form-message {
@@ -401,6 +412,7 @@ select:disabled {
 @media (max-width: 650px) {
     .page {
         align-items: flex-start;
+
         padding: 18px 12px;
     }
 

@@ -1,229 +1,165 @@
 "use strict";
 
-const form =
-    document.getElementById(
-        "basvuruForm"
-    );
+const form = document.getElementById("basvuruForm");
 
-const telefonInput =
-    document.getElementById(
-        "telefonno"
-    );
+const telefonInput = document.getElementById("telefonno");
+const markaSelect = document.getElementById("marka");
+const tipSelect = document.getElementById("tip");
+const yilInput = document.getElementById("yil");
+const kmInput = document.getElementById("km");
+const vitesSelect = document.getElementById("vites");
+const yakitSelect = document.getElementById("yakit");
+const ilSelect = document.getElementById("il");
 
-const markaSelect =
-    document.getElementById(
-        "marka"
-    );
+const submitButton = document.getElementById("submitButton");
+const formMessage = document.getElementById("formMessage");
 
-const tipSelect =
-    document.getElementById(
-        "tip"
-    );
+const alanAdlari = [
+    "telefonno",
+    "marka",
+    "tip",
+    "yil",
+    "km",
+    "vites",
+    "yakit",
+    "il"
+];
 
-const yilInput =
-    document.getElementById(
-        "yil"
-    );
+/* =========================================================
+   SAYFA AÇILIŞI
+   ========================================================= */
 
-const kmInput =
-    document.getElementById(
-        "km"
-    );
+document.addEventListener("DOMContentLoaded", async () => {
+    yilInput.max = new Date().getFullYear() + 1;
 
-const vitesSelect =
-    document.getElementById(
-        "vites"
-    );
+    hataTemizlemeOlaylariniEkle();
 
-const yakitSelect =
-    document.getElementById(
-        "yakit"
-    );
+    await Promise.all([
+        markalariYukle(),
+        secenekleriYukle()
+    ]);
+});
 
-const ilSelect =
-    document.getElementById(
-        "il"
-    );
+/* =========================================================
+   MARKA DEĞİŞİKLİĞİ
+   ========================================================= */
 
-const submitButton =
-    document.getElementById(
-        "submitButton"
-    );
+markaSelect.addEventListener("change", async () => {
+    hataTemizle("marka");
+    hataTemizle("tip");
 
-const formMessage =
-    document.getElementById(
-        "formMessage"
-    );
+    tipSelect.disabled = true;
+    tipSelect.innerHTML =
+        '<option value="">Önce marka seçiniz</option>';
 
-document.addEventListener(
-    "DOMContentLoaded",
-    async () => {
-        yilInput.max =
-            new Date().getFullYear() + 1;
-
-        await Promise.all([
-            markalariYukle(),
-            secenekleriYukle()
-        ]);
+    if (!markaSelect.value) {
+        return;
     }
-);
 
-markaSelect.addEventListener(
-    "change",
-    async () => {
-        hataTemizle("marka");
-        hataTemizle("tip");
+    await tipleriYukle(markaSelect.value);
+});
 
-        tipSelect.disabled = true;
+/* =========================================================
+   FORM GÖNDERME
+   ========================================================= */
 
-        tipSelect.innerHTML = `
-            <option value="">
-                Önce marka seçiniz
-            </option>
-        `;
+form.addEventListener("submit", async event => {
+    event.preventDefault();
 
-        if (!markaSelect.value) {
-            return;
-        }
+    mesajGizle();
 
-        await tipleriYukle(
-            markaSelect.value
-        );
+    if (!formuDogrula()) {
+        ilkHataliAlanaGit();
+        return;
     }
-);
 
-form.addEventListener(
-    "submit",
-    async event => {
-        event.preventDefault();
+    const basvuru = {
+        telefonno: telefonInput.value.trim(),
+        marka: markaSelect.value,
+        tip: tipSelect.value,
+        yil: Number(yilInput.value),
+        km: Number(kmInput.value),
+        vites: vitesSelect.value,
+        yakit: yakitSelect.value,
+        il: ilSelect.value
+    };
 
-        mesajGizle();
+    yukleniyorAyarla(true);
 
-        if (!formuDogrula()) {
-            return;
-        }
-
-        const basvuru = {
-            telefonno:
-                telefonInput.value,
-
-            marka:
-                markaSelect.value,
-
-            tip:
-                tipSelect.value,
-
-            yil:
-                Number(yilInput.value),
-
-            km:
-                Number(kmInput.value),
-
-            vites:
-                vitesSelect.value,
-
-            yakit:
-                yakitSelect.value,
-
-            il:
-                ilSelect.value
-        };
-
-        yukleniyorAyarla(true);
-
-        try {
-            const response =
-                await fetch(
-                    "/api/basvurular",
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body:
-                            JSON.stringify(
-                                basvuru
-                            )
-                    }
-                );
-
-            const sonuc =
-                await response.json();
-
-            if (!response.ok) {
-                throw new Error(
-                    sonuc.message ||
-                    "Başvuru kaydedilemedi."
-                );
-            }
-
-            mesajGoster(
-                `Başvurunuz kaydedildi. Başvuru numarası: ${sonuc.data.guid}`,
-                "success"
-            );
-
-            form.reset();
-
-            tipSelect.disabled = true;
-
-            tipSelect.innerHTML = `
-                <option value="">
-                    Önce marka seçiniz
-                </option>
-            `;
-        } catch (error) {
-            console.error(error);
-
-            mesajGoster(
-                error.message,
-                "error"
-            );
-        } finally {
-            yukleniyorAyarla(false);
-        }
-    }
-);
-
-async function markalariYukle() {
     try {
-        const response =
-            await fetch(
-                "/api/markalar"
-            );
+        const response = await fetch("/api/basvurular", {
+            method: "POST",
 
-        const sonuc =
-            await response.json();
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify(basvuru)
+        });
+
+        const sonuc = await response.json();
 
         if (!response.ok) {
             throw new Error(
-                sonuc.message
+                sonuc.message || "Başvuru kaydedilemedi."
             );
         }
 
-        markaSelect.innerHTML = `
-            <option value="">
-                Araç markasını seçiniz
-            </option>
-        `;
-
-        sonuc.data.forEach(
-            marka => {
-                markaSelect.appendChild(
-                    optionOlustur(marka)
-                );
-            }
+        mesajGoster(
+            `Başvurunuz kaydedildi.\nBaşvuru numarası: ${sonuc.data.guid}`,
+            "success"
         );
+
+        form.reset();
+        tumHatalariTemizle();
+
+        tipSelect.disabled = true;
+        tipSelect.innerHTML =
+            '<option value="">Önce marka seçiniz</option>';
+    } catch (error) {
+        console.error(error);
+
+        mesajGoster(
+            error.message || "Beklenmeyen bir hata oluştu.",
+            "error"
+        );
+    } finally {
+        yukleniyorAyarla(false);
+    }
+});
+
+/* =========================================================
+   MARKALARI YÜKLEME
+   ========================================================= */
+
+async function markalariYukle() {
+    try {
+        const response = await fetch("/api/markalar");
+        const sonuc = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                sonuc.message || "Markalar alınamadı."
+            );
+        }
+
+        markaSelect.innerHTML =
+            '<option value="">Araç markasını seçiniz</option>';
+
+        sonuc.data.forEach(marka => {
+            markaSelect.appendChild(
+                optionOlustur(marka)
+            );
+        });
 
         markaSelect.disabled = false;
     } catch (error) {
-        markaSelect.innerHTML = `
-            <option value="">
-                Markalar yüklenemedi
-            </option>
-        `;
+        console.error(error);
+
+        markaSelect.innerHTML =
+            '<option value="">Markalar yüklenemedi</option>';
+
+        markaSelect.disabled = true;
 
         mesajGoster(
             "Markalar yüklenemedi.",
@@ -232,53 +168,44 @@ async function markalariYukle() {
     }
 }
 
+/* =========================================================
+   ARAÇ TİPLERİNİ YÜKLEME
+   ========================================================= */
+
 async function tipleriYukle(marka) {
-    tipSelect.innerHTML = `
-        <option value="">
-            Araç tipleri yükleniyor...
-        </option>
-    `;
+    tipSelect.innerHTML =
+        '<option value="">Araç tipleri yükleniyor...</option>';
 
     try {
-        const response =
-            await fetch(
-                `/api/tipler?marka=${
-                    encodeURIComponent(
-                        marka
-                    )
-                }`
-            );
+        const response = await fetch(
+            `/api/tipler?marka=${encodeURIComponent(marka)}`
+        );
 
-        const sonuc =
-            await response.json();
+        const sonuc = await response.json();
 
         if (!response.ok) {
             throw new Error(
-                sonuc.message
+                sonuc.message || "Araç tipleri alınamadı."
             );
         }
 
-        tipSelect.innerHTML = `
-            <option value="">
-                Araç tipini seçiniz
-            </option>
-        `;
+        tipSelect.innerHTML =
+            '<option value="">Araç tipini seçiniz</option>';
 
-        sonuc.data.forEach(
-            tip => {
-                tipSelect.appendChild(
-                    optionOlustur(tip)
-                );
-            }
-        );
+        sonuc.data.forEach(tip => {
+            tipSelect.appendChild(
+                optionOlustur(tip)
+            );
+        });
 
         tipSelect.disabled = false;
     } catch (error) {
-        tipSelect.innerHTML = `
-            <option value="">
-                Araç tipleri yüklenemedi
-            </option>
-        `;
+        console.error(error);
+
+        tipSelect.innerHTML =
+            '<option value="">Araç tipleri yüklenemedi</option>';
+
+        tipSelect.disabled = true;
 
         mesajGoster(
             "Araç tipleri yüklenemedi.",
@@ -287,19 +214,18 @@ async function tipleriYukle(marka) {
     }
 }
 
+/* =========================================================
+   FORM SEÇENEKLERİNİ YÜKLEME
+   ========================================================= */
+
 async function secenekleriYukle() {
     try {
-        const response =
-            await fetch(
-                "/api/form-secenekleri"
-            );
-
-        const sonuc =
-            await response.json();
+        const response = await fetch("/api/form-secenekleri");
+        const sonuc = await response.json();
 
         if (!response.ok) {
             throw new Error(
-                sonuc.message
+                sonuc.message || "Form seçenekleri alınamadı."
             );
         }
 
@@ -321,6 +247,8 @@ async function secenekleriYukle() {
             sonuc.data.yakitTurleri
         );
     } catch (error) {
+        console.error(error);
+
         mesajGoster(
             "Form seçenekleri yüklenemedi.",
             "error"
@@ -328,33 +256,25 @@ async function secenekleriYukle() {
     }
 }
 
-function selectDoldur(
-    select,
-    ilkSecenek,
-    liste
-) {
-    select.innerHTML = `
-        <option value="">
-            ${ilkSecenek}
-        </option>
-    `;
+/* =========================================================
+   SELECT YARDIMCI FONKSİYONLARI
+   ========================================================= */
 
-    liste.forEach(
-        deger => {
-            select.appendChild(
-                optionOlustur(deger)
-            );
-        }
-    );
+function selectDoldur(select, ilkSecenek, liste) {
+    select.innerHTML =
+        `<option value="">${ilkSecenek}</option>`;
+
+    liste.forEach(deger => {
+        select.appendChild(
+            optionOlustur(deger)
+        );
+    });
 
     select.disabled = false;
 }
 
 function optionOlustur(deger) {
-    const option =
-        document.createElement(
-            "option"
-        );
+    const option = document.createElement("option");
 
     option.value = deger;
     option.textContent = deger;
@@ -362,19 +282,20 @@ function optionOlustur(deger) {
     return option;
 }
 
+/* =========================================================
+   FORM DOĞRULAMA
+   ========================================================= */
+
 function formuDogrula() {
     tumHatalariTemizle();
 
     let gecerli = true;
 
-    const telefon =
-        telefonInput.value
-            .replace(/\D/g, "");
+    const telefon = telefonInput.value.replace(/\D/g, "");
+    const yil = Number(yilInput.value);
+    const enBuyukYil = new Date().getFullYear() + 1;
 
-    if (
-        telefon.length !== 10 &&
-        telefon.length !== 11
-    ) {
+    if (telefon.length !== 10 && telefon.length !== 11) {
         hataGoster(
             "telefonno",
             "Telefon numarası 10 veya 11 haneli olmalıdır."
@@ -401,10 +322,14 @@ function formuDogrula() {
         gecerli = false;
     }
 
-    if (!yilInput.value) {
+    if (
+        yilInput.value === "" ||
+        yil < 1900 ||
+        yil > enBuyukYil
+    ) {
         hataGoster(
             "yil",
-            "Model yılı giriniz."
+            `Model yılı 1900 ile ${enBuyukYil} arasında olmalıdır.`
         );
 
         gecerli = false;
@@ -452,83 +377,122 @@ function formuDogrula() {
     return gecerli;
 }
 
-function hataGoster(
-    alanAdi,
-    mesaj
-) {
-    const alan =
-        document.getElementById(
-            alanAdi
-        );
+/* =========================================================
+   HATA GÖSTERME VE TEMİZLEME
+   ========================================================= */
 
-    const hata =
-        document.getElementById(
-            `${alanAdi}Error`
-        );
+function hataGoster(alanAdi, mesaj) {
+    const alan = document.getElementById(alanAdi);
+    const hata = document.getElementById(
+        `${alanAdi}Error`
+    );
 
-    alan.classList.add(
-        "input-error"
+    if (!alan || !hata) {
+        return;
+    }
+
+    alan.classList.add("input-error");
+
+    alan.setAttribute(
+        "aria-invalid",
+        "true"
+    );
+
+    alan.setAttribute(
+        "aria-describedby",
+        `${alanAdi}Error`
     );
 
     hata.textContent = mesaj;
+    hata.classList.add("show");
 }
 
 function hataTemizle(alanAdi) {
-    const alan =
-        document.getElementById(
-            alanAdi
-        );
-
-    const hata =
-        document.getElementById(
-            `${alanAdi}Error`
-        );
-
-    alan.classList.remove(
-        "input-error"
+    const alan = document.getElementById(alanAdi);
+    const hata = document.getElementById(
+        `${alanAdi}Error`
     );
 
+    if (!alan || !hata) {
+        return;
+    }
+
+    alan.classList.remove("input-error");
+
+    alan.removeAttribute("aria-invalid");
+    alan.removeAttribute("aria-describedby");
+
     hata.textContent = "";
+    hata.classList.remove("show");
 }
 
 function tumHatalariTemizle() {
-    [
-        "telefonno",
-        "marka",
-        "tip",
-        "yil",
-        "km",
-        "vites",
-        "yakit",
-        "il"
-    ].forEach(hataTemizle);
+    alanAdlari.forEach(hataTemizle);
 }
 
-function mesajGoster(
-    mesaj,
-    tur
-) {
-    formMessage.textContent = mesaj;
+/*
+   Kullanıcı bir alana tekrar değer girince
+   o alana ait hata mesajı otomatik temizlenir.
+*/
+function hataTemizlemeOlaylariniEkle() {
+    alanAdlari.forEach(alanAdi => {
+        const alan = document.getElementById(alanAdi);
 
+        if (!alan) {
+            return;
+        }
+
+        const olayAdi =
+            alan.tagName === "SELECT"
+                ? "change"
+                : "input";
+
+        alan.addEventListener(olayAdi, () => {
+            hataTemizle(alanAdi);
+        });
+    });
+}
+
+function ilkHataliAlanaGit() {
+    const ilkHataliAlan =
+        document.querySelector(".input-error");
+
+    if (!ilkHataliAlan) {
+        return;
+    }
+
+    ilkHataliAlan.focus();
+
+    ilkHataliAlan.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+}
+
+/* =========================================================
+   FORM GENEL MESAJI
+   ========================================================= */
+
+function mesajGoster(mesaj, tur) {
+    formMessage.textContent = mesaj;
     formMessage.className =
         `form-message ${tur}`;
 }
 
 function mesajGizle() {
     formMessage.textContent = "";
-
     formMessage.className =
         "form-message hidden";
 }
 
-function yukleniyorAyarla(
-    yukleniyor
-) {
-    submitButton.disabled =
-        yukleniyor;
+/* =========================================================
+   YÜKLENİYOR DURUMU
+   ========================================================= */
 
-    submitButton.textContent =
-        yukleniyor
-            ? "Başvuru kaydediliyor..."
-            : "Başvuruyu gönder";
+function yukleniyorAyarla(yukleniyor) {
+    submitButton.disabled = yukleniyor;
+
+    submitButton.textContent = yukleniyor
+        ? "Başvuru kaydediliyor..."
+        : "Başvuruyu gönder";
 }
