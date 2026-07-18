@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Araç Başvuru Formu</title>
+
+    <link
+        rel="stylesheet"
+        href="/style.css"
+    >
+</head>
+
+<body>
+    <main class="page">
+        <section class="application-card">
+            <header class="card-header">
+                <span class="header-label">
+                    ARAÇ BAŞVURUSU
+                </span>
+
+                <h1>
+                    Aracınızın bilgilerini girin
+                </h1>
+
+                <p>
+                    Araç bilgilerinizi girerek
+                    başvurunuzu oluşturabilirsiniz.
+                </p>
+            </header>
+
+            <form
+                id="basvuruForm"
+                novalidate
+            >
+                <div class="form-group">
+                    <label for="telefonno">
+                        Telefon numarası
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="telefonno"
+                        name="telefonno"
+                        maxlength="15"
+                        placeholder="05XX XXX XX XX"
+                        autocomplete="tel"
+                        required
+                    >
+
+                    <small
+                        id="telefonnoError"
+                        class="error-message"
+                    ></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="marka">
+                        Araç markası
+                    </label>
+
+                    <select
+                        id="marka"
+                        name="marka"
+                        disabled
+                        required
+                    >
+                        <option value="">
+                            Markalar yükleniyor...
+                        </option>
+                    </select>
+
+                    <small
+                        id="markaError"
+                        class="error-message"
+                    ></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="tip">
+                        Araç tipi / modeli
+                    </label>
+
+                    <select
+                        id="tip"
+                        name="tip"
+                        disabled
+                        required
+                    >
+                        <option value="">
+                            Önce marka seçiniz
+                        </option>
+                    </select>
+
+                    <small
+                        id="tipError"
+                        class="error-message"
+                    ></small>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="yil">
+                            Model yılı
+                        </label>
+
+                        <input
+                            type="number"
+                            id="yil"
+                            name="yil"
+                            min="1900"
+                            max="2100"
+                            placeholder="2022"
+                            required
+                        >
+
+                        <small
+                            id="yilError"
+                            class="error-message"
+                        ></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="km">
+                            Kilometre
+                        </label>
+
+                        <input
+                            type="number"
+                            id="km"
+                            name="km"
+                            min="0"
+                            max="5000000"
+                            placeholder="85000"
+                            required
+                        >
+
+                        <small
+                            id="kmError"
+                            class="error-message"
+                        ></small>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="vites">
+                            Vites
+                        </label>
+
+                        <select
+                            id="vites"
+                            name="vites"
+                            disabled
+                            required
+                        >
+                            <option value="">
+                                Yükleniyor...
+                            </option>
+                        </select>
+
+                        <small
+                            id="vitesError"
+                            class="error-message"
+                        ></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="yakit">
+                            Yakıt
+                        </label>
+
+                        <select
+                            id="yakit"
+                            name="yakit"
+                            disabled
+                            required
+                        >
+                            <option value="">
+                                Yükleniyor...
+                            </option>
+                        </select>
+
+                        <small
+                            id="yakitError"
+                            class="error-message"
+                        ></small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="il">
+                        Bulunduğunuz il
+                    </label>
+
+                    <select
+                        id="il"
+                        name="il"
+                        disabled
+                        required
+                    >
+                        <option value="">
+                            İller yükleniyor...
+                        </option>
+                    </select>
+
+                    <small
+                        id="ilError"
+                        class="error-message"
+                    ></small>
+                </div>
+
+                <button
+                    type="submit"
+                    id="submitButton"
+                    class="submit-button"
+                >
+                    Başvuruyu gönder
+                </button>
+
+                <div
+                    id="formMessage"
+                    class="form-message hidden"
+                    role="alert"
+                ></div>
+            </form>
+        </section>
+    </main>
+
+    <script src="/script.js"></script>
+</body>
+</html>
