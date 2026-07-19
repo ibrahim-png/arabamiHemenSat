@@ -14,10 +14,6 @@ const ilSelect = document.getElementById("il");
 const submitButton = document.getElementById("submitButton");
 const formMessage = document.getElementById("formMessage");
 
-const successPopup = document.getElementById("successPopup");
-const popupCloseButton =
-    document.getElementById("popupCloseButton");
-
 const alanAdlari = [
     "telefonno",
     "marka",
@@ -37,7 +33,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     yilInput.max = new Date().getFullYear() + 1;
 
     hataTemizlemeOlaylariniEkle();
-    popupOlaylariniEkle();
 
     await Promise.all([
         markalariYukle(),
@@ -120,7 +115,15 @@ form.addEventListener("submit", async event => {
         tipSelect.innerHTML =
             '<option value="">Önce marka seçiniz</option>';
 
-        basariliPopupAc();
+        mesajGoster(
+            "Başvurunuz kaydedildi. Sizinle iletişime geçilecektir.",
+            "success"
+        );
+
+        formMessage.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest"
+        });
     } catch (error) {
         console.error(error);
 
@@ -306,6 +309,7 @@ function formuDogrula() {
         telefonInput.value.replace(/\D/g, "");
 
     const yil = Number(yilInput.value);
+
     const enBuyukYil =
         new Date().getFullYear() + 1;
 
@@ -490,51 +494,7 @@ function ilkHataliAlanaGit() {
 }
 
 /* =========================================================
-   BAŞARILI BAŞVURU POPUP
-   ========================================================= */
-
-function basariliPopupAc() {
-    successPopup.classList.remove("hidden");
-
-    document.body.classList.add("popup-open");
-
-    setTimeout(() => {
-        popupCloseButton.focus();
-    }, 50);
-}
-
-function basariliPopupKapat() {
-    successPopup.classList.add("hidden");
-
-    document.body.classList.remove("popup-open");
-
-    submitButton.focus();
-}
-
-function popupOlaylariniEkle() {
-    popupCloseButton.addEventListener(
-        "click",
-        basariliPopupKapat
-    );
-
-    successPopup.addEventListener("click", event => {
-        if (event.target === successPopup) {
-            basariliPopupKapat();
-        }
-    });
-
-    document.addEventListener("keydown", event => {
-        if (
-            event.key === "Escape" &&
-            !successPopup.classList.contains("hidden")
-        ) {
-            basariliPopupKapat();
-        }
-    });
-}
-
-/* =========================================================
-   FORM GENEL HATA MESAJI
+   FORM SONUÇ MESAJI
    ========================================================= */
 
 function mesajGoster(mesaj, tur) {
