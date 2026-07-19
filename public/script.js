@@ -14,6 +14,10 @@ const ilSelect = document.getElementById("il");
 const submitButton = document.getElementById("submitButton");
 const formMessage = document.getElementById("formMessage");
 
+const successPopup = document.getElementById("successPopup");
+const popupCloseButton =
+    document.getElementById("popupCloseButton");
+
 const alanAdlari = [
     "telefonno",
     "marka",
@@ -33,6 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     yilInput.max = new Date().getFullYear() + 1;
 
     hataTemizlemeOlaylariniEkle();
+    popupOlaylariniEkle();
 
     await Promise.all([
         markalariYukle(),
@@ -49,6 +54,7 @@ markaSelect.addEventListener("change", async () => {
     hataTemizle("tip");
 
     tipSelect.disabled = true;
+
     tipSelect.innerHTML =
         '<option value="">Önce marka seçiniz</option>';
 
@@ -101,26 +107,26 @@ form.addEventListener("submit", async event => {
 
         if (!response.ok) {
             throw new Error(
-                sonuc.message || "Başvuru kaydedilemedi."
+                sonuc.message ||
+                "Başvuru kaydedilemedi."
             );
         }
-
-        mesajGoster(
-            `Başvurunuz kaydedildi.\nBaşvuru numarası: ${sonuc.data.guid}`,
-            "success"
-        );
 
         form.reset();
         tumHatalariTemizle();
 
         tipSelect.disabled = true;
+
         tipSelect.innerHTML =
             '<option value="">Önce marka seçiniz</option>';
+
+        basariliPopupAc();
     } catch (error) {
         console.error(error);
 
         mesajGoster(
-            error.message || "Beklenmeyen bir hata oluştu.",
+            error.message ||
+            "Beklenmeyen bir hata oluştu.",
             "error"
         );
     } finally {
@@ -139,7 +145,8 @@ async function markalariYukle() {
 
         if (!response.ok) {
             throw new Error(
-                sonuc.message || "Markalar alınamadı."
+                sonuc.message ||
+                "Markalar alınamadı."
             );
         }
 
@@ -185,7 +192,8 @@ async function tipleriYukle(marka) {
 
         if (!response.ok) {
             throw new Error(
-                sonuc.message || "Araç tipleri alınamadı."
+                sonuc.message ||
+                "Araç tipleri alınamadı."
             );
         }
 
@@ -220,12 +228,15 @@ async function tipleriYukle(marka) {
 
 async function secenekleriYukle() {
     try {
-        const response = await fetch("/api/form-secenekleri");
+        const response =
+            await fetch("/api/form-secenekleri");
+
         const sonuc = await response.json();
 
         if (!response.ok) {
             throw new Error(
-                sonuc.message || "Form seçenekleri alınamadı."
+                sonuc.message ||
+                "Form seçenekleri alınamadı."
             );
         }
 
@@ -291,11 +302,17 @@ function formuDogrula() {
 
     let gecerli = true;
 
-    const telefon = telefonInput.value.replace(/\D/g, "");
-    const yil = Number(yilInput.value);
-    const enBuyukYil = new Date().getFullYear() + 1;
+    const telefon =
+        telefonInput.value.replace(/\D/g, "");
 
-    if (telefon.length !== 10 && telefon.length !== 11) {
+    const yil = Number(yilInput.value);
+    const enBuyukYil =
+        new Date().getFullYear() + 1;
+
+    if (
+        telefon.length !== 10 &&
+        telefon.length !== 11
+    ) {
         hataGoster(
             "telefonno",
             "Telefon numarası 10 veya 11 haneli olmalıdır."
@@ -382,10 +399,13 @@ function formuDogrula() {
    ========================================================= */
 
 function hataGoster(alanAdi, mesaj) {
-    const alan = document.getElementById(alanAdi);
-    const hata = document.getElementById(
-        `${alanAdi}Error`
-    );
+    const alan =
+        document.getElementById(alanAdi);
+
+    const hata =
+        document.getElementById(
+            `${alanAdi}Error`
+        );
 
     if (!alan || !hata) {
         return;
@@ -408,10 +428,13 @@ function hataGoster(alanAdi, mesaj) {
 }
 
 function hataTemizle(alanAdi) {
-    const alan = document.getElementById(alanAdi);
-    const hata = document.getElementById(
-        `${alanAdi}Error`
-    );
+    const alan =
+        document.getElementById(alanAdi);
+
+    const hata =
+        document.getElementById(
+            `${alanAdi}Error`
+        );
 
     if (!alan || !hata) {
         return;
@@ -430,13 +453,10 @@ function tumHatalariTemizle() {
     alanAdlari.forEach(hataTemizle);
 }
 
-/*
-   Kullanıcı bir alana tekrar değer girince
-   o alana ait hata mesajı otomatik temizlenir.
-*/
 function hataTemizlemeOlaylariniEkle() {
     alanAdlari.forEach(alanAdi => {
-        const alan = document.getElementById(alanAdi);
+        const alan =
+            document.getElementById(alanAdi);
 
         if (!alan) {
             return;
@@ -470,17 +490,63 @@ function ilkHataliAlanaGit() {
 }
 
 /* =========================================================
-   FORM GENEL MESAJI
+   BAŞARILI BAŞVURU POPUP
+   ========================================================= */
+
+function basariliPopupAc() {
+    successPopup.classList.remove("hidden");
+
+    document.body.classList.add("popup-open");
+
+    setTimeout(() => {
+        popupCloseButton.focus();
+    }, 50);
+}
+
+function basariliPopupKapat() {
+    successPopup.classList.add("hidden");
+
+    document.body.classList.remove("popup-open");
+
+    submitButton.focus();
+}
+
+function popupOlaylariniEkle() {
+    popupCloseButton.addEventListener(
+        "click",
+        basariliPopupKapat
+    );
+
+    successPopup.addEventListener("click", event => {
+        if (event.target === successPopup) {
+            basariliPopupKapat();
+        }
+    });
+
+    document.addEventListener("keydown", event => {
+        if (
+            event.key === "Escape" &&
+            !successPopup.classList.contains("hidden")
+        ) {
+            basariliPopupKapat();
+        }
+    });
+}
+
+/* =========================================================
+   FORM GENEL HATA MESAJI
    ========================================================= */
 
 function mesajGoster(mesaj, tur) {
     formMessage.textContent = mesaj;
+
     formMessage.className =
         `form-message ${tur}`;
 }
 
 function mesajGizle() {
     formMessage.textContent = "";
+
     formMessage.className =
         "form-message hidden";
 }

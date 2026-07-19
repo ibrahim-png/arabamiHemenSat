@@ -7,7 +7,6 @@
     --primary-hover: #244bd2;
     --text-primary: #172033;
     --text-secondary: #5f6879;
-    --border: rgba(255, 255, 255, 0.34);
     --error: #c62828;
     --success: #16794c;
 }
@@ -28,6 +27,10 @@ body {
     background: #0b1020;
 }
 
+body.popup-open {
+    overflow: hidden;
+}
+
 button,
 input,
 select {
@@ -46,6 +49,7 @@ select {
     overflow: hidden;
 
     background: #0b1020;
+
     pointer-events: none;
 }
 
@@ -168,7 +172,7 @@ select {
     color: #2146cc;
     background: rgba(255, 255, 255, 0.52);
 
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.60);
     border-radius: 20px;
 
     font-size: 12px;
@@ -188,7 +192,8 @@ select {
     line-height: 1.15;
     letter-spacing: -0.7px;
 
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.38);
+    text-shadow:
+        0 1px 2px rgba(255, 255, 255, 0.38);
 }
 
 .card-header p {
@@ -207,6 +212,7 @@ select {
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
+
     gap: 18px;
 }
 
@@ -250,8 +256,7 @@ select {
     transition:
         border-color 160ms ease,
         box-shadow 160ms ease,
-        background-color 160ms ease,
-        transform 160ms ease;
+        background-color 160ms ease;
 }
 
 input::placeholder {
@@ -291,8 +296,7 @@ select:disabled {
 }
 
 /*
-   Hata mesajı boşken tamamen gizlenir.
-   Bu nedenle formda boş alan kaplamaz.
+   Hata mesajları boşken alan kaplamaz.
 */
 .error-message {
     display: none;
@@ -306,9 +310,6 @@ select:disabled {
     font-weight: 600;
 }
 
-/*
-   JavaScript hata olduğunda "show" sınıfını ekler.
-*/
 .error-message.show {
     display: block;
 }
@@ -371,7 +372,7 @@ select:disabled {
 }
 
 /* =========================================================
-   FORM SONUÇ MESAJI
+   FORM HATA MESAJI
    ========================================================= */
 
 .form-message {
@@ -381,7 +382,6 @@ select:disabled {
     border-radius: 10px;
 
     line-height: 1.5;
-    white-space: pre-line;
 
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -399,6 +399,144 @@ select:disabled {
     background: rgba(255, 241, 241, 0.88);
 
     border: 1px solid rgba(198, 40, 40, 0.16);
+}
+
+/* =========================================================
+   BAŞARILI BAŞVURU POPUP
+   ========================================================= */
+
+.popup-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(5, 10, 24, 0.68);
+
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+
+    animation: popupOverlayOpen 200ms ease-out both;
+}
+
+.popup-card {
+    width: 100%;
+    max-width: 420px;
+
+    padding: 34px 28px 28px;
+
+    text-align: center;
+
+    background: rgba(255, 255, 255, 0.96);
+
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: 22px;
+
+    box-shadow:
+        0 30px 90px rgba(0, 0, 0, 0.42);
+
+    animation: popupCardOpen 280ms ease-out both;
+}
+
+.popup-icon {
+    width: 68px;
+    height: 68px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 20px;
+
+    color: #ffffff;
+    background: var(--success);
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 12px 26px rgba(22, 121, 76, 0.28);
+
+    font-size: 36px;
+    font-weight: 700;
+}
+
+.popup-card h2 {
+    margin: 0 0 10px;
+
+    color: #111827;
+
+    font-size: 26px;
+}
+
+.popup-card p {
+    margin: 0 0 25px;
+
+    color: #5f6879;
+
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.popup-close-button {
+    width: 100%;
+    min-height: 50px;
+
+    color: #ffffff;
+    background: var(--primary);
+
+    border: none;
+    border-radius: 11px;
+
+    font-weight: 700;
+    cursor: pointer;
+
+    transition:
+        background-color 160ms ease,
+        transform 160ms ease;
+}
+
+.popup-close-button:hover {
+    background: var(--primary-hover);
+
+    transform: translateY(-1px);
+}
+
+.popup-close-button:focus-visible {
+    outline: 3px solid rgba(49, 94, 251, 0.30);
+    outline-offset: 3px;
+}
+
+@keyframes popupOverlayOpen {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes popupCardOpen {
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(20px)
+            scale(0.94);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
 }
 
 .hidden {
@@ -426,6 +564,7 @@ select:disabled {
 
     .form-row {
         grid-template-columns: 1fr;
+
         gap: 0;
     }
 
@@ -447,14 +586,25 @@ select:disabled {
             translate(-50%, -50%)
             scale(1.18);
     }
+
+    .popup-card {
+        padding: 30px 20px 22px;
+    }
+
+    .popup-card h2 {
+        font-size: 23px;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .application-card {
+    .application-card,
+    .popup-overlay,
+    .popup-card {
         animation: none;
     }
 
     .submit-button,
+    .popup-close-button,
     input,
     select {
         transition: none;

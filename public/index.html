@@ -11,7 +11,7 @@
 
     <meta
         name="description"
-        content="Aracınızın bilgilerini girin, hızlı araç satış başvurunuzu oluşturun."
+        content="Aracınızın bilgilerini girerek tamamen ücretsiz hızlı araç satış başvurunuzu oluşturun."
     >
 
     <title>Arabanı Hemen Sat | Araç Başvurusu</title>
@@ -24,7 +24,6 @@
 
 <body>
 
-    <!-- Tam ekran arka plan videosu -->
     <div
         class="video-background"
         aria-hidden="true"
@@ -53,16 +52,12 @@
 
             <header class="card-header">
 
-                <span class="header-label">
-                    ARABANI HEMEN SAT
-                </span>
-
                 <h1>
-                    Aracınızın bilgilerini girin
+                    Aracınızın Bilgileri
                 </h1>
 
                 <p>
-                    Araç bilgilerinizi girerek hızlı satış başvurunuzu
+                    Araç bilgilerinizi girerek tamamen ücretsiz hızlı satış başvurunuzu
                     oluşturabilirsiniz.
                 </p>
 
@@ -293,6 +288,39 @@
         </section>
 
     </main>
+
+    <!-- Başarılı başvuru popup -->
+    <div
+        id="successPopup"
+        class="popup-overlay hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="successPopupTitle"
+    >
+        <div class="popup-card">
+
+            <div class="popup-icon">
+                ✓
+            </div>
+
+            <h2 id="successPopupTitle">
+                Başvurunuz alındı
+            </h2>
+
+            <p>
+                Başvurunuz başarıyla kaydedildi.
+            </p>
+
+            <button
+                type="button"
+                id="popupCloseButton"
+                class="popup-close-button"
+            >
+                Tamam
+            </button>
+
+        </div>
+    </div>
 
     <script src="/script.js"></script>
 
