@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
     <meta charset="UTF-8">
 
@@ -11,10 +10,20 @@
 
     <meta
         name="description"
-        content="Aracınızın bilgilerini girerek tamamen ücretsiz hızlı araç satış başvurunuzu oluşturun."
+        content="Aracınızı hızlı ve kolay şekilde satmak için ücretsiz araç satış başvurusu oluşturun."
     >
 
-    <title>Arabanı Hemen Sat | Araç Başvurusu</title>
+    <meta
+        name="robots"
+        content="index, follow"
+    >
+
+    <link
+        rel="canonical"
+        href="https://arabanihemensat.com/"
+    >
+
+    <title>Arabanı Hemen Sat | Araç Satış Başvurusu</title>
 
     <link
         rel="stylesheet"
@@ -24,39 +33,20 @@
 
 <body>
 
-    <!--
-        Arka plan videosu geçici olarak devre dışı bırakıldı.
-
-        <div
-            class="video-background"
-            aria-hidden="true"
-        >
-            <video
-                class="background-video"
-                autoplay
-                muted
-                loop
-                playsinline
-                preload="metadata"
-            >
-                <source
-                    src="/carLine.mp4"
-                    type="video/mp4"
-                >
-            </video>
-
-            <div class="video-blur"></div>
-            <div class="video-overlay"></div>
-        </div>
-    -->
-
     <main class="page">
 
-        <section class="application-card">
+        <section
+            class="application-card"
+            aria-labelledby="pageTitle"
+        >
 
             <header class="card-header">
 
-                <h1>
+                <span class="header-label">
+                    Ücretsiz Araç Satış Başvurusu
+                </span>
+
+                <h1 id="pageTitle">
                     Aracınızın Bilgileri
                 </h1>
 
@@ -79,68 +69,75 @@
                     </label>
 
                     <input
-                        type="tel"
                         id="telefonno"
                         name="telefonno"
-                        maxlength="15"
-                        placeholder="05XX XXX XX XX"
+                        type="tel"
+                        inputmode="numeric"
                         autocomplete="tel"
-                        inputmode="tel"
+                        maxlength="11"
+                        placeholder="05XXXXXXXXX"
                         required
                     >
 
-                    <small
+                    <div
                         id="telefonnoError"
                         class="error-message"
-                    ></small>
+                        role="alert"
+                    ></div>
 
                 </div>
 
-                <div class="form-group">
+                <div class="form-row">
 
-                    <label for="marka">
-                        Araç markası
-                    </label>
+                    <div class="form-group">
 
-                    <select
-                        id="marka"
-                        name="marka"
-                        disabled
-                        required
-                    >
-                        <option value="">
-                            Markalar yükleniyor...
-                        </option>
-                    </select>
+                        <label for="marka">
+                            Araç markası
+                        </label>
 
-                    <small
-                        id="markaError"
-                        class="error-message"
-                    ></small>
+                        <select
+                            id="marka"
+                            name="marka"
+                            disabled
+                            required
+                        >
+                            <option value="">
+                                Markalar yükleniyor...
+                            </option>
+                        </select>
 
-                </div>
+                        <div
+                            id="markaError"
+                            class="error-message"
+                            role="alert"
+                        ></div>
 
-                <div class="form-group">
+                    </div>
 
-                    <label for="tip">
-                        Araç tipi / modeli
-                    </label>
+                    <div class="form-group">
 
-                    <select
-                        id="tip"
-                        name="tip"
-                        disabled
-                        required
-                    >
-                        <option value="">
-                            Önce marka seçiniz
-                        </option>
-                    </select>
+                        <label for="tip">
+                            Araç tipi / modeli
+                        </label>
 
-                    <small
-                        id="tipError"
-                        class="error-message"
-                    ></small>
+                        <select
+                            id="tip"
+                            name="tip"
+                            disabled
+                            required
+                        >
+                            <option value="">
+                                Önce marka seçiniz
+                            </option>
+                        </select>
+
+                        <div
+                            id="tipError"
+                            class="error-message"
+                            role="alert"
+                        ></div>
+
+                    </div>
 
                 </div>
 
@@ -153,20 +150,20 @@
                         </label>
 
                         <input
-                            type="number"
                             id="yil"
                             name="yil"
-                            min="1900"
-                            max="2100"
-                            placeholder="2022"
+                            type="number"
                             inputmode="numeric"
+                            min="1900"
+                            placeholder="Örnek: 2022"
                             required
                         >
 
-                        <small
+                        <div
                             id="yilError"
                             class="error-message"
-                        ></small>
+                            role="alert"
+                        ></div>
 
                     </div>
 
@@ -177,20 +174,21 @@
                         </label>
 
                         <input
-                            type="number"
                             id="km"
                             name="km"
+                            type="number"
+                            inputmode="numeric"
                             min="0"
                             max="5000000"
-                            placeholder="85000"
-                            inputmode="numeric"
+                            placeholder="Örnek: 75000"
                             required
                         >
 
-                        <small
+                        <div
                             id="kmError"
                             class="error-message"
-                        ></small>
+                            role="alert"
+                        ></div>
 
                     </div>
 
@@ -215,10 +213,11 @@
                             </option>
                         </select>
 
-                        <small
+                        <div
                             id="vitesError"
                             class="error-message"
-                        ></small>
+                            role="alert"
+                        ></div>
 
                     </div>
 
@@ -239,10 +238,11 @@
                             </option>
                         </select>
 
-                        <small
+                        <div
                             id="yakitError"
                             class="error-message"
-                        ></small>
+                            role="alert"
+                        ></div>
 
                     </div>
 
@@ -265,17 +265,18 @@
                         </option>
                     </select>
 
-                    <small
+                    <div
                         id="ilError"
                         class="error-message"
-                    ></small>
+                        role="alert"
+                    ></div>
 
                 </div>
 
                 <button
-                    type="submit"
                     id="submitButton"
                     class="submit-button"
+                    type="submit"
                 >
                     Başvuruyu gönder
                 </button>
@@ -283,7 +284,7 @@
                 <div
                     id="formMessage"
                     class="form-message hidden"
-                    role="alert"
+                    role="status"
                     aria-live="polite"
                 ></div>
 
@@ -296,5 +297,4 @@
     <script src="/script.js"></script>
 
 </body>
-
 </html>
