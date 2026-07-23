@@ -10,7 +10,7 @@
 
     <meta
         name="description"
-        content="Aracınızı hızlı ve kolay şekilde satmak için aracınız için ücretsiz bir şekilde teklif başvurusu oluşturun."
+        content="Araç bilgilerinizi paylaşın; başvurunuz değerlendirilsin ve teklif süreci için sizinle iletişime geçilsin. Başvuru ücretsiz ve bağlayıcı değildir."
     >
 
     <meta
@@ -23,7 +23,7 @@
         href="https://arabanihemensat.com/"
     >
 
-    <title>Arabanı Hemen Sat | Araç Satış Başvurusu</title>
+    <title>Arabanı Hemen Sat | Ücretsiz Araç Teklif Başvurusu</title>
 
     <link
         rel="stylesheet"
@@ -33,7 +33,58 @@
 
 <body>
 
-    <main class="page">
+    <a
+        class="skip-link"
+        href="#ana-icerik"
+    >
+        Ana içeriğe geç
+    </a>
+
+    <header class="site-header">
+
+        <div class="site-header-inner">
+
+            <a
+                class="site-brand"
+                href="/"
+                aria-label="Arabanı Hemen Sat ana sayfa"
+            >
+                Arabanı Hemen Sat
+            </a>
+
+            <nav
+                class="site-navigation"
+                aria-label="Ana menü"
+            >
+                <a href="#hizmet-hakkinda">
+                    Hizmet hakkında
+                </a>
+
+                <a href="#nasil-calisir">
+                    Nasıl çalışır?
+                </a>
+
+                <a href="#basvuru">
+                    Başvuru
+                </a>
+
+                <a href="#veri-kullanimi">
+                    Veri kullanımı
+                </a>
+
+                <a href="#iletisim">
+                    İletişim
+                </a>
+            </nav>
+
+        </div>
+
+    </header>
+
+    <main
+        id="ana-icerik"
+        class="page"
+    >
 
         <section
             class="application-card"
@@ -43,22 +94,103 @@
             <header class="card-header">
 
                 <p class="brand-name">
-                    Arabanı Hemen Sat
+                    Ücretsiz ve bağlayıcı olmayan başvuru
                 </p>
 
                 <h1 id="pageTitle">
-                    Aracınızın Bilgileri
+                    Aracınız için teklif başvurusu oluşturun
                 </h1>
 
                 <p>
-                    Araç bilgilerinizi girerek ücretsiz teklif
-                    başvurusu oluşturabilirsiniz.
+                    Araç bilgilerinizi iletin. Başvurunuz
+                    değerlendirildikten sonra teklif süreci hakkında
+                    telefonla sizinle iletişime geçilsin.
                 </p>
 
             </header>
 
+            <section
+                id="hizmet-hakkinda"
+                class="content-section"
+                aria-labelledby="serviceTitle"
+            >
+
+                <h2 id="serviceTitle">
+                    Hizmet hakkında
+                </h2>
+
+                <p>
+                    Arabanı Hemen Sat, araç sahiplerinin araç bilgilerini
+                    ileterek ücretsiz bir teklif değerlendirmesi
+                    başlatmasına imkân veren bir başvuru hizmetidir.
+                    Bu sayfada doğrudan araç satışı veya online satış
+                    sözleşmesi yapılmaz.
+                </p>
+
+                <p>
+                    Formun gönderilmesi teklif verileceği, aracın satın
+                    alınacağı veya satışın gerçekleşeceği garantisini
+                    oluşturmaz. Değerlendirme sonucu ve sonraki adımlar
+                    telefon görüşmesinde açıklanır.
+                </p>
+
+            </section>
+
+            <section
+                id="nasil-calisir"
+                class="content-section"
+                aria-labelledby="processTitle"
+            >
+
+                <h2 id="processTitle">
+                    Süreç nasıl işler?
+                </h2>
+
+                <ol class="process-list">
+                    <li>
+                        <strong>Başvurunuzu iletin.</strong>
+                        Telefon ve temel araç bilgilerinizi forma girin.
+                    </li>
+
+                    <li>
+                        <strong>Bilgiler değerlendirilsin.</strong>
+                        Araç bilgileri teklif süreci için incelenir.
+                    </li>
+
+                    <li>
+                        <strong>Sizinle iletişime geçilsin.</strong>
+                        Değerlendirme ve gerekebilecek ek bilgiler
+                        telefon görüşmesinde paylaşılır.
+                    </li>
+
+                    <li>
+                        <strong>Kararınızı özgürce verin.</strong>
+                        Başvuru ücretsizdir ve satış yapma zorunluluğu
+                        doğurmaz.
+                    </li>
+                </ol>
+
+            </section>
+
+            <section
+                id="basvuru"
+                class="form-section"
+                aria-labelledby="applicationTitle"
+            >
+
+                <div class="section-heading">
+                    <h2 id="applicationTitle">
+                        Teklif başvuru bilgileri
+                    </h2>
+
+                    <p>
+                        Tüm alanları doğru ve güncel bilgilerle doldurun.
+                    </p>
+                </div>
+
             <form
                 id="basvuruForm"
+                aria-labelledby="applicationTitle"
                 novalidate
             >
 
@@ -278,14 +410,14 @@
                     class="submit-button"
                     type="submit"
                 >
-                    Ücretsiz Teklif Al
+                    Ücretsiz Başvuruyu Gönder
                 </button>
 
                 <p class="form-disclosure">
-                    Başvuruyu göndererek araç bilgilerinizin
-                    değerlendirilmesini ve teklif süreci hakkında
-                    telefonla sizinle iletişim kurulmasını kabul
-                    etmiş olursunuz.
+                    “Ücretsiz Başvuruyu Gönder” düğmesine basarak araç
+                    bilgilerinizin başvuruyu değerlendirmek amacıyla
+                    işlenmesini ve bu başvuruyla ilgili olarak telefonla
+                    iletişime geçilmesini talep etmiş olursunuz.
                     <a href="#veri-kullanimi">
                         Veri kullanım açıklamasını okuyun.
                     </a>
@@ -300,9 +432,11 @@
 
             </form>
 
+            </section>
+
             <section
                 id="veri-kullanimi"
-                class="privacy-summary"
+                class="content-section privacy-summary"
                 aria-labelledby="privacyTitle"
             >
 
@@ -311,23 +445,116 @@
                 </h2>
 
                 <p>
-                    Bu formda telefon numaranız, araç bilgileriniz
-                    ve bulunduğunuz il alınır. Bu bilgiler araç satış
-                    talebinizi değerlendirmek ve teklif süreci
-                    hakkında sizinle iletişim kurmak amacıyla
+                    <strong>Toplanan bilgiler:</strong>
+                    Telefon numaranız, araç markası ve modeli, model
+                    yılı, kilometre, vites, yakıt türü ve bulunduğunuz
+                    il bilgileri alınır.
+                </p>
+
+                <p>
+                    <strong>Kullanım amacı:</strong>
+                    Bilgiler yalnızca araç teklif başvurunuzu
+                    değerlendirmek, başvurunun takibini yapmak ve teklif
+                    süreci hakkında sizinle iletişim kurmak amacıyla
                     kullanılır.
                 </p>
 
                 <p>
-                    Bu sayfa ödeme veya kart bilgisi, hesap parolası
-                    ya da kimlik belgesi istemez. Başvuru ücretsizdir.
+                    <strong>İşleme ve hizmet sağlayıcılar:</strong>
+                    Başvuru bilgileri uygulamanın veritabanında saklanır
+                    ve başvuruyu takip eden yetkili kişiye sunucu
+                    tarafından bildirim olarak iletilebilir. Barındırma,
+                    veritabanı ve bildirim altyapısını sağlayan teknik
+                    hizmet sağlayıcılar, hizmetin işletilmesi kapsamında
+                    verileri işleyebilir.
                 </p>
+
+                <p>
+                    <strong>Saklama:</strong>
+                    Başvuru kayıtları, değerlendirme ve iletişim
+                    sürecinin yürütülmesi ile geçerli yasal
+                    yükümlülükler için gerekli süre boyunca saklanır;
+                    bu süre sonunda silinir veya anonim hâle getirilir.
+                </p>
+
+                <p>
+                    <strong>Başvuru ve talepleriniz:</strong>
+                    Bilgilerinize erişme, yanlış bilgilerin düzeltilmesini
+                    veya şartları oluştuğunda silinmesini isteme
+                    taleplerinizi aşağıdaki telefon veya posta adresi
+                    üzerinden iletebilirsiniz.
+                </p>
+
+                <p>
+                    Bu sayfa ödeme veya kart bilgisi, hesap parolası ya
+                    da kimlik belgesi istemez. Formu göndermek bir satış
+                    sözleşmesi oluşturmaz ve başvuru ücretsizdir.
+                </p>
+
+            </section>
+
+            <section
+                id="iletisim"
+                class="content-section contact-section"
+                aria-labelledby="contactTitle"
+            >
+
+                <h2 id="contactTitle">
+                    İletişim ve hizmet bilgileri
+                </h2>
+
+                <dl class="contact-list">
+                    <div>
+                        <dt>Hizmet adı</dt>
+                        <dd>Arabanı Hemen Sat</dd>
+                    </div>
+
+                    <div>
+                        <dt>Telefon</dt>
+                        <dd>
+                            <a href="tel:4440114">
+                                444 0 114
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt>Adres</dt>
+                        <dd>
+                            Sky City, Sümer Mahallesi,
+                            Merkezefendi / Denizli
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt>İnternet adresi</dt>
+                        <dd>
+                            <a href="https://arabanihemensat.com/">
+                                arabanihemensat.com
+                            </a>
+                        </dd>
+                    </div>
+                </dl>
 
             </section>
 
         </section>
 
     </main>
+
+    <footer class="site-footer">
+
+        <p>
+            © Arabanı Hemen Sat
+        </p>
+
+        <nav aria-label="Alt menü">
+            <a href="#hizmet-hakkinda">Hizmet hakkında</a>
+            <a href="#veri-kullanimi">Veri kullanımı</a>
+            <a href="#iletisim">İletişim</a>
+        </nav>
+
+    </footer>
 
     <script src="/script.js"></script>
 
