@@ -13,6 +13,8 @@ const ilSelect = document.getElementById("il");
 
 const submitButton = document.getElementById("submitButton");
 const formMessage = document.getElementById("formMessage");
+const submitButtonText =
+    submitButton.textContent.trim();
 
 const alanAdlari = [
     "telefonno",
@@ -520,5 +522,5 @@ function yukleniyorAyarla(yukleniyor) {
 
     submitButton.textContent = yukleniyor
         ? "Başvuru kaydediliyor..."
-        : "Başvuruyu gönder";
+        : submitButtonText;
 }

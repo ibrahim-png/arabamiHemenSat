@@ -4,28 +4,166 @@ require("dotenv").config();
 
 const path = require("path");
 const express = require("express");
+const helmet = require("helmet");
+const { rateLimit } = require("express-rate-limit");
 const { Pool } = require("pg");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const IS_PRODUCTION =
+    process.env.NODE_ENV === "production";
+const CANONICAL_HOST = (
+    process.env.CANONICAL_HOST ||
+    "arabanihemensat.com"
+).trim().toLowerCase();
 
 if (!process.env.DATABASE_URL) {
     console.error("DATABASE_URL bulunamadı.");
     process.exit(1);
 }
 
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl:
-        process.env.NODE_ENV === "production"
-            ? { rejectUnauthorized: false }
-            : false
-});
+if (
+    !/^[a-z0-9.-]+(?::\d+)?$/.test(
+        CANONICAL_HOST
+    )
+) {
+    console.error(
+        "CANONICAL_HOST geçerli bir alan adı değil."
+    );
+    process.exit(1);
+}
+
+const poolConfig = {
+    connectionString: process.env.DATABASE_URL
+};
+
+if (IS_PRODUCTION) {
+    poolConfig.ssl = {
+        rejectUnauthorized: true
+    };
+}
+
+const pool = new Pool(poolConfig);
 
 app.disable("x-powered-by");
+app.set("trust proxy", IS_PRODUCTION ? 1 : false);
+
+const cspDirectives = {
+    defaultSrc: ["'self'"],
+    baseUri: ["'self'"],
+    connectSrc: ["'self'"],
+    fontSrc: ["'self'"],
+    formAction: ["'self'"],
+    frameAncestors: ["'none'"],
+    frameSrc: ["'none'"],
+    imgSrc: ["'self'", "data:"],
+    objectSrc: ["'none'"],
+    scriptSrc: ["'self'"],
+    scriptSrcAttr: ["'none'"],
+    styleSrc: ["'self'"]
+};
+
+if (IS_PRODUCTION) {
+    cspDirectives.upgradeInsecureRequests = [];
+}
+
+app.use(
+    helmet({
+        contentSecurityPolicy: {
+            useDefaults: false,
+            directives: cspDirectives
+        },
+        crossOriginResourcePolicy: {
+            policy: "same-origin"
+        },
+        frameguard: {
+            action: "deny"
+        },
+        referrerPolicy: {
+            policy: "strict-origin-when-cross-origin"
+        },
+        strictTransportSecurity: {
+            maxAge: 31536000,
+            includeSubDomains: true
+        }
+    })
+);
+
+app.use((req, res, next) => {
+    res.setHeader(
+        "Permissions-Policy",
+        [
+            "accelerometer=()",
+            "camera=()",
+            "geolocation=()",
+            "gyroscope=()",
+            "magnetometer=()",
+            "microphone=()",
+            "payment=()",
+            "usb=()"
+        ].join(", ")
+    );
+
+    next();
+});
+
+app.use((req, res, next) => {
+    if (
+        !IS_PRODUCTION ||
+        req.path === "/health"
+    ) {
+        return next();
+    }
+
+    const isCanonicalHost =
+        req.hostname.toLowerCase() ===
+        CANONICAL_HOST;
+
+    if (req.secure && isCanonicalHost) {
+        return next();
+    }
+
+    return res.redirect(
+        308,
+        `https://${CANONICAL_HOST}${req.originalUrl}`
+    );
+});
+
+const apiRateLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 120,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+    message: {
+        success: false,
+        message:
+            "Çok fazla istek gönderildi. Lütfen kısa bir süre sonra tekrar deneyiniz."
+    }
+});
+
+const basvuruRateLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    limit: 10,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+    message: {
+        success: false,
+        message:
+            "Çok fazla başvuru gönderildi. Lütfen daha sonra tekrar deneyiniz."
+    }
+});
+
+app.use("/api", apiRateLimiter);
+app.use(
+    "/api/basvurular",
+    basvuruRateLimiter
+);
 
 app.use(express.json({ limit: "20kb" }));
-app.use(express.urlencoded({ extended: true }));
+
+app.get("/index.html", (req, res) => {
+    return res.redirect(308, "/");
+});
 
 /*
  * Statik dosyalar yalnızca gerçekten mevcutsa döndürülür.
@@ -336,36 +474,46 @@ app.get(
 app.post(
     "/api/basvurular",
     async (req, res) => {
+        if (!req.is("application/json")) {
+            return res.status(415).json({
+                success: false,
+                message:
+                    "Bu adres yalnızca JSON biçimindeki istekleri kabul eder."
+            });
+        }
+
+        const body = req.body || {};
+
         const telefonno = telefonTemizle(
-            req.body.telefonno
+            body.telefonno
         );
 
         const marka = metinTemizle(
-            req.body.marka
+            body.marka
         );
 
         const tip = metinTemizle(
-            req.body.tip
+            body.tip
         );
 
         const il = metinTemizle(
-            req.body.il
+            body.il
         );
 
         const vites = metinTemizle(
-            req.body.vites
+            body.vites
         );
 
         const yakit = metinTemizle(
-            req.body.yakit
+            body.yakit
         );
 
         const yil = Number(
-            req.body.yil
+            body.yil
         );
 
         const km = Number(
-            req.body.km
+            body.km
         );
 
         if (
@@ -382,6 +530,17 @@ app.post(
                 success: false,
                 message:
                     "Tüm alanları eksiksiz doldurunuz."
+            });
+        }
+
+        if (
+            marka.length > 100 ||
+            tip.length > 150
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Marka veya araç tipi izin verilen uzunluğu aşıyor."
             });
         }
 
@@ -509,14 +668,6 @@ app.post(
                         )
                         RETURNING
                             guid,
-                            telefonno,
-                            marka,
-                            tip,
-                            yil,
-                            km,
-                            vites,
-                            yakit,
-                            il,
                             processdate,
                             processtime
                     `,
@@ -621,80 +772,10 @@ app.use((req, res) => {
 
     <title>404 | Sayfa Bulunamadı</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        html,
-        body {
-            min-height: 100%;
-        }
-
-        body {
-            min-height: 100vh;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            font-family: Arial, Helvetica, sans-serif;
-            color: #172033;
-            background: #f4f6fb;
-        }
-
-        .error-card {
-            width: 100%;
-            max-width: 520px;
-            padding: 42px 30px;
-            text-align: center;
-            background: #ffffff;
-            border: 1px solid #e1e5ee;
-            border-radius: 18px;
-            box-shadow:
-                0 18px 55px
-                rgba(20, 30, 55, 0.12);
-        }
-
-        .status-code {
-            margin: 0 0 10px;
-            color: #315efb;
-            font-size: 64px;
-            line-height: 1;
-            font-weight: 800;
-        }
-
-        h1 {
-            margin: 0 0 14px;
-            font-size: 28px;
-        }
-
-        p {
-            margin: 0 0 26px;
-            color: #5f6879;
-            line-height: 1.6;
-        }
-
-        a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 48px;
-            padding: 0 22px;
-            color: #ffffff;
-            text-decoration: none;
-            background: #315efb;
-            border-radius: 10px;
-            font-weight: 700;
-        }
-
-        a:hover {
-            background: #244bd2;
-        }
-    </style>
+    <link rel="stylesheet" href="/style.css">
 </head>
 
-<body>
+<body class="error-page">
 
     <main class="error-card">
 
@@ -720,6 +801,57 @@ app.use((req, res) => {
 </body>
 </html>
     `);
+});
+
+/*
+ * BEKLENMEYEN HATALAR
+ */
+app.use((error, req, res, next) => {
+    if (res.headersSent) {
+        return next(error);
+    }
+
+    const hataliJson =
+        error instanceof SyntaxError &&
+        error.status === 400 &&
+        Object.prototype.hasOwnProperty.call(
+            error,
+            "body"
+        );
+
+    if (hataliJson) {
+        return res.status(400).json({
+            success: false,
+            message:
+                "Geçerli bir JSON isteği gönderiniz."
+        });
+    }
+
+    if (error.type === "entity.too.large") {
+        return res.status(413).json({
+            success: false,
+            message:
+                "Gönderilen istek izin verilen boyutu aşıyor."
+        });
+    }
+
+    console.error(
+        "Beklenmeyen sunucu hatası:",
+        error
+    );
+
+    if (req.originalUrl.startsWith("/api/")) {
+        return res.status(500).json({
+            success: false,
+            message:
+                "Beklenmeyen bir sunucu hatası oluştu."
+        });
+    }
+
+    return res
+        .status(500)
+        .type("text/plain")
+        .send("Beklenmeyen bir sunucu hatası oluştu.");
 });
 
 /*
