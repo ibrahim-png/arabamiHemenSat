@@ -16,6 +16,15 @@ const CANONICAL_HOST = (
     process.env.CANONICAL_HOST ||
     "arabanihemensat.com"
 ).trim().toLowerCase();
+const TELEGRAM_BOT_TOKEN = (
+    process.env.TELEGRAM_BOT_TOKEN || ""
+).trim();
+const TELEGRAM_CHAT_ID = (
+    process.env.TELEGRAM_CHAT_ID || ""
+).trim();
+const TELEGRAM_ENABLED =
+    Boolean(TELEGRAM_BOT_TOKEN) &&
+    Boolean(TELEGRAM_CHAT_ID);
 
 if (!process.env.DATABASE_URL) {
     console.error("DATABASE_URL bulunamadı.");
@@ -31,6 +40,18 @@ if (
         "CANONICAL_HOST geçerli bir alan adı değil."
     );
     process.exit(1);
+}
+
+if (!TELEGRAM_ENABLED) {
+    const telegramUyarisi =
+        Boolean(TELEGRAM_BOT_TOKEN) !==
+        Boolean(TELEGRAM_CHAT_ID)
+            ? "Telegram bildirimi devre dışı: TELEGRAM_BOT_TOKEN ve TELEGRAM_CHAT_ID birlikte tanımlanmalıdır."
+            : "Telegram bildirimi devre dışı: TELEGRAM_BOT_TOKEN ve TELEGRAM_CHAT_ID tanımlanmamış.";
+
+    console.warn(
+        telegramUyarisi
+    );
 }
 
 const poolConfig = {
@@ -292,6 +313,108 @@ function metinTemizle(value) {
 
 function telefonTemizle(value) {
     return metinTemizle(value).replace(/\D/g, "");
+}
+
+function telegramMesajiOlustur(basvuru) {
+    return [
+        "🚗 Yeni araç satış başvurusu",
+        "",
+        `Başvuru ID: ${basvuru.guid}`,
+        `Telefon: ${basvuru.telefonno}`,
+        `Marka: ${basvuru.marka}`,
+        `Model / Tip: ${basvuru.tip}`,
+        `Model yılı: ${basvuru.yil}`,
+        `Kilometre: ${basvuru.km}`,
+        `Vites: ${basvuru.vites}`,
+        `Yakıt: ${basvuru.yakit}`,
+        `İl: ${basvuru.il}`,
+        `Kayıt tarihi: ${basvuru.processdate}`,
+        `Kayıt saati: ${basvuru.processtime}`
+    ].join("\n");
+}
+
+function bekle(ms) {
+    return new Promise(resolve => {
+        setTimeout(resolve, ms);
+    });
+}
+
+async function telegramBildirimiGonder(
+    basvuru
+) {
+    if (!TELEGRAM_ENABLED) {
+        return false;
+    }
+
+    const telegramUrl =
+        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+
+    for (
+        let deneme = 1;
+        deneme <= 3;
+        deneme += 1
+    ) {
+        const controller = new AbortController();
+        const zamanAsimi = setTimeout(
+            () => controller.abort(),
+            5000
+        );
+
+        try {
+            const response = await fetch(
+                telegramUrl,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text:
+                            telegramMesajiOlustur(
+                                basvuru
+                            ),
+                        protect_content: true
+                    }),
+                    signal: controller.signal
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    `Telegram API HTTP ${response.status}`
+                );
+            }
+
+            const sonuc = await response.json();
+
+            if (!sonuc.ok) {
+                throw new Error(
+                    "Telegram API başarısız yanıt verdi."
+                );
+            }
+
+            return true;
+        } catch (error) {
+            const hataTuru =
+                error.name === "AbortError"
+                    ? "zaman aşımı"
+                    : "bağlantı veya API hatası";
+
+            console.error(
+                `Telegram bildirimi gönderilemedi (${deneme}/3): ${hataTuru}.`
+            );
+
+            if (deneme < 3) {
+                await bekle(deneme * 500);
+            }
+        } finally {
+            clearTimeout(zamanAsimi);
+        }
+    }
+
+    return false;
 }
 
 /*
@@ -684,6 +807,22 @@ app.post(
                 );
 
             await client.query("COMMIT");
+
+            const kaydedilenBasvuru = {
+                ...result.rows[0],
+                telefonno,
+                marka,
+                tip,
+                yil,
+                km,
+                vites,
+                yakit,
+                il
+            };
+
+            await telegramBildirimiGonder(
+                kaydedilenBasvuru
+            );
 
             return res.status(201).json({
                 success: true,
